@@ -1,0 +1,33 @@
+# experiment options
+func_name_list: # only valid for "ackley", "levy", "rosenbrock", "quadratic"
+  - ackley
+  - levy
+  - rosenbrock
+  - quadratic
+seed: 1024
+num_runs: 10
+dimension: 10000
+num_iterations: 20000
+optimizers: # multiple optimizers for fair comparison, valid for "fo", "zo", "zoar_0", "zoar", "fo-hess"
+  - zo # ZO Vanilla
+  - zoar # ZoAR
+  - hizoo # HiZOO
+  - zovh 
+  - zovh_reuse 
+
+
+# optimization options
+lr: 0.00001
+betas: # momentum for first / second moment
+  - 0.9
+  - 0.99
+epsilon: 1.0e-8 # epsilon
+update_rule: sgd # "sgd", "adam", "radazo"
+
+# ---- # for ZO algorithm
+num_queries: 3 # number of query samples
+mu: 0.1 # zo eps
+lambda_hess: 0.1 # inverse hessian smoothing parameter
+
+# ---- # for RL RL w/ hiatory algorithm
+num_histories: 3 # number of histories

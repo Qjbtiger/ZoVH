@@ -1,0 +1,65 @@
+# Device to run on: one of [cpu, cuda, mps]
+# Use 'cuda' if you have a GPU with CUDA available
+device: cuda
+
+# Global random seed for numpy/torch, also drives estimator seeds
+seed: 1026
+# 1024, 1025, 1026
+
+# Data settings
+# data_root: folder where MNIST will be downloaded and cached
+# num_workers: dataloader workers; set 0 on Windows if you see issues
+data_root: ./data
+num_workers: 2
+
+# Training settings
+# batch_size: per-step batch of MNIST samples
+# num_epochs: number of epochs to train
+# lr: SGD learning rate
+# momentum: SGD momentum
+batch_size: 32
+#32
+num_epochs: 1
+lr: 0.0001
+momentum: 0.9
+
+# Logging
+# log_every_batches: print train loss + test accuracy every N batches
+log_every_batches: 100
+
+# Output directory for Hessian error CSVs.
+# If unset or empty, defaults to "NEW result cnn" under the project folder.
+# Inside this directory, one CSV per Method is produced with header:
+# [Function, Dimension, Seed, Method, Sample_Index, Sample_RandomSeed, Frobenius_Error]
+# Function = layer name, e.g., "conv1.weight"
+output_dir: ./NEW result cnn
+
+# Hessian approximation settings
+hessian:
+  # log_every_steps: compute Hessian errors every N training steps (global step)
+  log_every_steps: 1
+  # num_queries (K): number of random directions/samples used in estimators
+  num_queries: 3
+  # mu: finite-difference perturbation magnitude
+  mu: 0.5  # noise_std: optional noise injected into function evaluation for estimators
+  noise_std: 0.0
+  # num_histories: how many recent (theta, seed) snapshots to reuse for EGS_mean_reuse
+  num_histories: 3
+
+# Per-layer Hessian evaluation settings
+# You requested computing errors for conv1.weight, conv2.weight, fc2.weight.
+# For tractability, we support sub-sampling a subset of dimensions via eval_dim.
+# The true Hessian and approximations are computed on that subset to keep
+# memory/time manageable (full Hessian for large layers is prohibitive).
+# - conv1.weight total dim = 32*1*3*3 = 288 -> eval_dim can be up to 288
+# - conv2.weight total dim = 64*32*3*3 = 18432 (very large) -> sub-sample strongly
+# - fc2.weight   total dim = 10*128 = 1280 -> can sub-sample or use full
+layers:
+  conv1.weight:
+    # Number of coordinates to evaluate Hessian on (<= 288). Use 0 or >= total_dim for full.
+    eval_dim: 256
+  conv2.weight:
+    # Large layer; we sub-sample to keep Hessian feasible.
+    eval_dim: 1024
+  fc2.weight:
+    eval_dim: 512
